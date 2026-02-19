@@ -1,0 +1,186 @@
+{
+  "images": [
+    {
+      "src": "assets/brainrotcat.png",
+      "date": "2023-11-07",
+      "artist": {
+        "name": "brainrotcat",
+        "url": "https://twitter.com/brainrotcat"
+      }
+    },
+    {
+      "src": "assets/artdebil.jpg",
+      "date": "2024-03-16",
+      "artist": {
+        "name": "artdebil",
+        "url": "https://twitter.com/artdebil"
+      }
+    },
+    {
+      "src": "assets/original.png",
+      "date": "2022-04-20",
+      "artist": {
+        "name": "unknown",
+        "url": ""
+      },
+      "desc": "Sadly, I couldn’t find or remember the original artist who transformed my character from an idea in my mind into a reality."
+    },
+    {
+      "src": "assets/buc0c0.png",
+      "date": "2025-01-12",
+      "artist": {
+        "name": "buc0c0",
+        "url": "https://twitter.com/buc0c0"
+      }
+    },
+    {
+      "src": "assets/yellmi.png",
+      "date": "2023-01-09",
+      "artist": {
+        "name": "yellmi",
+        "url": "https://twitter.com/___yellmi"
+      }
+    },
+    {
+      "src": "assets/nana.png",
+      "date": "2022-06-15",
+      "artist": {
+        "name": "Nana",
+        "url": "https://twitter.com/Mainlian"
+      }
+    },
+    {
+      "src": "assets/unknown.jpg",
+      "date": "2024-07-26",
+      "artist": {
+        "name": "Maaya",
+        "url": "https://vgen.co/ShinigamiMaaya"
+      },
+      "desc": "<s>This is one of my favourite commissions, but sadly I cannot find the artist's profile. If anyone manages to find it, please let me know!</s><br>Found them! Shoutout to kuksa for reminding me I could message them through PayPal or email"
+    },
+    {
+      "src": "assets/kola.jpeg",
+      "date": "2024-07-21",
+      "artist": {
+        "name": "Kola",
+        "url": "https://www.instagram.com/DarkKolaa"
+      }
+    },
+    {
+      "src": "assets/milku.png",
+      "date": "2025-03-29",
+      "artist": {
+        "name": "milku666",
+        "url": "https://www.youtube.com/@milku666"
+      }
+    },
+    {
+      "src": "assets/yurilover.png",
+      "date": "2024-12-02",
+      "artist": {
+        "name": "yurilover1973",
+        "url": "https://twitter.com/Lololol40194363"
+      }
+    },
+    {
+      "src": "assets/farhan.png",
+      "date": "2025-06-13",
+      "artist": {
+        "name": "Farhan",
+        "url": "https://www.fiverr.com/rylanvo?source=inbox"
+      }
+    },
+    {
+      "src": "assets/yondee.png",
+      "date": "2022-07-20",
+      "artist": {
+        "name": "yondee",
+        "url": "https://twitter.com/yondeerart"
+      }
+    },
+    {
+      "src": "assets/olena.png",
+      "date": "2023-03-21",
+      "artist": {
+        "name": "veterymer",
+        "url": "https://www.fiverr.com/veterymer"
+      },
+      "desc": "I had always wanted to have a Celeste skin mod, so I commissioned veterymer to make me a small sheet of starting sprites. From those, I made the rest of them myself (+500 different sprites, iirc). I definitely wouldn’t have been able to make it without their initial sheet and design! You can download the skin mod by clicking <a href=\"https://gamebanana.com/mods/486547\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
+    },
+    {
+      "src": "assets/3d.jpg",
+      "date": "2025-06-13",
+      "artist": {
+        "name": "Farhan",
+        "url": "https://www.fiverr.com/rylanvo?source=inbox"
+      },
+      "desc": "I wanted to add a 3D model of Quarzite to my interactable portfolio, so I commissioned a 3D model. It has some geometry errors, and I'm not perfectly happy with the result, but it does the job."
+    },
+    {
+      "src": "assets/kassabakeki.jpg",
+      "date": "2025-09-12",
+      "artist": {
+        "name": "kassabakeki",
+        "url": "https://vgen.co/kassabakeki"
+      }
+    },
+    {
+      "src": "assets/dodo2.png",
+      "date": "2025-08-30",
+      "artist": {
+        "name": "dodo2",
+        "url": ""
+      },
+      "desc": "in dodo we trust"
+    },
+    {
+      "src": "assets/yuyumini.jpg",
+      "date": "2025-09-05",
+      "artist": {
+        "name": "Yuyumini99",
+        "url": "https://twitter.com/Yuyumini99"
+      }
+    },
+    {
+      "src": "assets/redacted.jpg",
+      "date": "2025-09-20",
+      "artist": {
+        "name": "a",
+        "url": ""
+      }
+    },
+    {
+      "src": "assets/redacted2.png",
+      "date": "2025-10-22",
+      "artist": {
+        "name": "a",
+        "url": ""
+      }
+    },
+    {
+      "src": "assets/sqacecat.png",
+      "date": "2025-11-08",
+      "artist": {
+        "name": "sqacecat",
+        "url": "https://www.tiktok.com/@sqacecat"
+      }
+    },
+    {
+      "src": "assets/crossover.png",
+      "date": "2025-11-20",
+      "artist": {
+        "name": "sqacecat",
+        "url": "https://www.tiktok.com/@sqacecat"
+      },
+      "desc": "crossover episode :P"
+    },
+    {
+      "src": "assets/danon1.png",
+      "date": "2025-12-25",
+      "artist": {
+        "name": "Danon",
+        "url": "https://x.com/_Danon"
+      }
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+// Notepad: multiple random versions + classic menu + wrapping + random offset
+(function () {
+  function setFontPx(px) {
+    const ta = document.getElementById("notepad-text");
+    ta.style.fontSize = px + "px";
+    ta.style.lineHeight = px + "px";
+    ta.style.fontFamily = '"FixedsysWin98", "Fixedsys", monospace';
+  }
+
+  // Force wrapping via inline styles so CSS can't override it
+  function applyWrap(isWrap) {
+    const ta = document.getElementById("notepad-text");
+    ta.classList.remove("notepad-wrap", "notepad-nowrap");
+    ta.classList.add(isWrap ? "notepad-wrap" : "notepad-nowrap");
+    ta.style.whiteSpace = isWrap ? "pre-wrap" : "pre";
+    ta.style.overflowWrap = isWrap ? "anywhere" : "normal";
+    ta.style.wordBreak = isWrap ? "break-word" : "normal";
+  }
+
+  const versions = [
+    {
+      name: "ASCII",
+      fromFile: "assets/ascii.txt",
+      fontSize: 7,
+      wrap: false,
+      window: { left: 1143, top: 497, width: 382, height: 430 },
+    },
+    {
+      name: "Form Report",
+      text:
+        "Forms FORM-29827281-12:\nTest Assessment Report\n\nThis was a " +
+        "triumph.\nI'm making a note here:\nHUGE SUCCESS.",
+      fontSize: 18,
+      wrap: true,
+      window: { left: 1154, top: 479, width: 500, height: 400 },
+    },
+    {
+      name: "Clippy Tip",
+      text:
+        "Did you know?\n\nYou can cycle through Clippy's quotes anytime—" +
+        "no need to reload the page.\n\nJust hold Ctrl and press the " +
+        "left or right arrow keys to go backward or forward.",
+      fontSize: 18,
+      wrap: true,
+      window: { left: 1154, top: 479, width: 500, height: 400 },
+    },
+    {
+      name: "Cat Face",
+      text: ":3 (in a non-male manipulator type of way)",
+      fontSize: 24,
+      wrap: true,
+      window: { left: 1154, top: 479, width: 500, height: 200 },
+    },
+    {
+      name: "Club Penguin",
+      text:
+        "hello everybody\n\nwelcome to my tutorial on how to play club " +
+        "penguin\n\n" +
+        "the first thing you want to do is open up your web browser and " +
+        "download from the description club penguin\n\n" +
+        "im not going to download it because I already have it\n\n" +
+        "thanks for watching make sure to sub and like",
+      fontSize: 20,
+      wrap: true,
+      window: { left: 1154, top: 479, width: 600, height: 350 },
+    },
+    {
+      name: "Tiny Text",
+      text: "lol why are you trying to read this",
+      fontSize: 6,
+      wrap: true,
+      window: { left: 1493, top: 740, width: 206, height: 126 },
+    },
+    {
+      name: "3",
+      text:
+        "W25oLJUkhVEMLKgseJzjd2oveFEwhAQoeJBxLHo0LJ1khVExe3TjBpXjgJ9nBAnv\n" +
+        "LKUyeZ9bfp93OFEyflEogpYxLGHzLKooBAMcLJCbe20jep93OFElgATjVVEre25o\n" +
+        "f3UvhVE0dJoxdbE0dJYbCVgcLJHjRWDoLJQrBZ5mCVE0dJI0LKUrCVE3BAnjVVE3\n" +
+        "dZavLJYxCFE1fFEnhZoxCbEsfbElhVEudZavdZ5qLJ15f2YvCl4=",
+      fontSize: 7,
+      wrap: false,
+      window: { left: 1143, top: 497, width: 382, height: 430 },
+    },
+  ];
+
+  function randomOffset(base, range = 30) {
+    return base + Math.floor(Math.random() * (range * 2 + 1)) - range;
+  }
+
+  async function pickContent(index) {
+    const ta = document.getElementById("notepad-text");
+    const win = document.getElementById("win-notepad");
+    let version;
+
+    if (typeof index === "number" && index >= 0 && index < versions.length) {
+      version = versions[index];
+    } else {
+      version = versions[Math.floor(Math.random() * versions.length)];
+    }
+
+    console.log("Chosen version:", version.name);
+
+    if (version.fromFile) {
+      try {
+        const res = await fetch(version.fromFile, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        ta.value = await res.text();
+      } catch (err) {
+        console.error("Failed to load file", version.fromFile, err);
+        ta.value = "[Error loading ASCII file]";
+      }
+    } else {
+      ta.value = version.text;
+    }
+
+    setFontPx(version.fontSize);
+    applyWrap(version.wrap);
+
+    if (version.name === "ASCII" || version.name === "3") {
+      win.style.left = version.window.left + "px";
+      win.style.top = version.window.top + "px";
+      win.style.width = version.window.width + "px";
+      win.style.height = version.window.height + "px";
+    } else {
+      win.style.left = randomOffset(version.window.left) + "px";
+      win.style.top = randomOffset(version.window.top) + "px";
+      win.style.width = version.window.width + "px";
+      win.style.height = version.window.height + "px";
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    await pickContent();
+  });
+
+  window.Notepad = { pickContent, count: versions.length };
+})();

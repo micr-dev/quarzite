@@ -1,0 +1,261 @@
+/* Base */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+/* Animated tiled background via fixed layer */
+.bg-tiles {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: #56007e;
+  background-image: url("../assets/tiles/tile1.png");
+  background-repeat: repeat;
+  background-position: 0 0;
+  background-size: auto;
+  animation: bg-scroll 300s linear infinite;
+}
+
+@keyframes bg-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 1000px 1000px;
+  }
+}
+
+/* Fonts */
+@font-face {
+  font-family: "FixedsysWin98";
+  src: url("../assets/fonts/Fixedsys62.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Logo container: fixed 195:46 box (not square) */
+#logo-container {
+  width: min(720px, 92vw);
+  margin: 12px auto 8px;
+}
+
+.logo-img {
+  width: 100%;
+  aspect-ratio: 195 / 46; /* keeps the rectangular box */
+  background: center/cover no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Layout */
+.mobile-container {
+  width: 100%;
+  min-height: 100vh;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Windows */
+.mobile-window {
+  width: 100%;
+}
+
+.title-bar-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.title-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+/* Window body gray */
+.window .window-body {
+  background: #c0c0c0;
+}
+
+/* Tabs */
+.tab-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  font-size: 14px;
+  background: #c0c0c0;
+  border: 2px solid #ffffff;
+  border-right-color: #808080;
+  border-bottom-color: #808080;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tab-btn img {
+  width: 18px;
+  height: 18px;
+  image-rendering: pixelated;
+}
+
+.tab-btn.active {
+  background: #000080;
+  color: #ffffff;
+  border-color: #808080;
+  border-right-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+}
+
+/* Gallery grid (1:1 squares, no bevel, contain images) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(128px, 1fr));
+  gap: 8px;
+}
+
+.gallery-item {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #c0c0c0;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Viewer */
+#viewer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 9998;
+}
+
+.viewer-window {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: min(92vw, 840px);
+  max-height: 90vh;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-window .window-body {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px;
+  background: #c0c0c0;
+}
+
+.viewer-figure {
+  margin: 0;
+  background: #ffffff;
+  border: 1px solid #bdbdbd;
+  padding: 6px;
+  display: grid;
+  place-items: center;
+}
+
+#viewer-img {
+  max-width: 100%;
+  max-height: 62vh;
+  height: auto;
+  object-fit: contain;
+}
+
+.viewer-meta,
+.viewer-desc {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.viewer-meta a {
+  color: #0000ff;
+  text-decoration: underline;
+}
+
+/* Info tabs */
+.info-tabs .tabs-menu {
+  margin: 8px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  list-style: none;
+  padding: 0;
+}
+.info-tabs .tabs-menu li {
+  display: inline-flex;
+  align-items: center;
+}
+.info-tabs .tabs-menu a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+.info-tabs [role="tabpanel"] .window-body {
+  padding: 16px;
+  line-height: 1.8;
+  font-size: 17px;
+}
+.info-tabs [role="tabpanel"] p {
+  margin: 0 0 14px;
+}
+
+/* Tablet up */
+@media (min-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .info-tabs .tabs-menu a {
+    font-size: 17px;
+  }
+  .info-tabs [role="tabpanel"] .window-body {
+    font-size: 18px;
+  }
+}
+
+/* Utility */
+[hidden] {
+  display: none !important;
+}
