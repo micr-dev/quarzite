@@ -23,7 +23,7 @@
         "name": "unknown",
         "url": ""
       },
-      "desc": "Sadly, I couldn’t find or remember the original artist who transformed my character from an idea in my mind into a reality."
+      "desc": "Sadly, I couldn\u2019t find or remember the original artist who transformed my character from an idea in my mind into a reality."
     },
     {
       "src": "assets/buc0c0.png",
@@ -105,7 +105,7 @@
         "name": "veterymer",
         "url": "https://www.fiverr.com/veterymer"
       },
-      "desc": "I had always wanted to have a Celeste skin mod, so I commissioned veterymer to make me a small sheet of starting sprites. From those, I made the rest of them myself (+500 different sprites, iirc). I definitely wouldn’t have been able to make it without their initial sheet and design! You can download the skin mod by clicking <a href=\"https://gamebanana.com/mods/486547\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
+      "desc": "I had always wanted to have a Celeste skin mod, so I commissioned veterymer to make me a small sheet of starting sprites. From those, I made the rest of them myself (+500 different sprites, iirc). I definitely wouldn\u2019t have been able to make it without their initial sheet and design! You can download the skin mod by clicking <a href=\"https://gamebanana.com/mods/486547\" target=\"_blank\" rel=\"noopener noreferrer\">here</a>."
     },
     {
       "src": "assets/3d.jpg",
@@ -212,6 +212,14 @@
       "artist": {
         "name": "ulb0u",
         "url": "https://vgen.co/ulb0u"
+      }
+    },
+    {
+      "src": "assets/pipuru-2026-03-30.webp",
+      "date": "2026-03-30",
+      "artist": {
+        "name": "Pipuru",
+        "url": "https://vgen.co/Pipururu"
       }
     }
   ]
