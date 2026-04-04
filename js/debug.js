@@ -8,14 +8,19 @@
     return Math.round(Number.parseFloat(n || "0"));
   }
 
+  function getScale() {
+    return window.AppLayout && typeof window.AppLayout.getScale === "function"
+      ? window.AppLayout.getScale()
+      : 1;
+  }
+
   function getStyles(el) {
-    const r = el.getBoundingClientRect();
-    const c = document.getElementById("desktop").getBoundingClientRect();
+    const style = getComputedStyle(el);
     return {
-      left: px(r.left - c.left),
-      top: px(r.top - c.top),
-      width: px(r.width),
-      height: px(r.height),
+      left: px(style.left),
+      top: px(style.top),
+      width: px(style.width),
+      height: px(style.height),
     };
   }
 
@@ -63,8 +68,9 @@
     const y0 = e.clientY;
 
     function onMove(ev) {
-      let dx = ev.clientX - x0;
-      let dy = ev.clientY - y0;
+      const scale = getScale();
+      let dx = (ev.clientX - x0) / scale;
+      let dy = (ev.clientY - y0) / scale;
 
       let left = s0.left;
       let top = s0.top;

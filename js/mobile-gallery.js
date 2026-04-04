@@ -1,5 +1,14 @@
 // Load gallery from ../data/gallery.json (newest -> oldest), 1:1 contain
 (function () {
+  const GalleryShared = window.GalleryShared;
+  let grid;
+  let images = [];
+
+  if (!GalleryShared) {
+    console.error("GalleryShared is required before js/mobile-gallery.js");
+    return;
+  }
+
   function sfx() {
     try {
       if (window.W98 && typeof window.W98.play === "function") {
@@ -9,56 +18,46 @@
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const grid = document.getElementById("gallery-grid");
+    grid = document.getElementById("gallery-grid");
     if (!grid) return;
 
     try {
-      const res = await fetch("../data/gallery.json", { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load gallery data");
-      const data = await res.json();
-      const images = Array.isArray(data.images) ? data.images.slice() : [];
+      images = await GalleryShared.loadGallery("../data/gallery.json", {
+        srcPrefix: "../",
+      });
 
-      // Sort by date descending (YYYY-MM-DD)
-      images.sort((a, b) => String(b.date || "").localeCompare(a.date || ""));
-
-      // Render
-      for (let i = 0; i < images.length; i++) {
-        const it = images[i];
-        const src = `../${it.src}`;
-
-        const wrap = document.createElement("div");
-        wrap.className = "gallery-item";
-        wrap.setAttribute(
-          "aria-label",
-          `Artwork by ${it.artist?.name || "Unknown"}`
+      grid.replaceChildren();
+      images.forEach((item, index) => {
+        grid.appendChild(
+          GalleryShared.createGalleryItem(item, index, {
+            className: "gallery-item",
+            alt: (entry) => `Artwork by ${entry.artist?.name || "Unknown"}`,
+            ariaLabel: (entry) =>
+              `Artwork by ${entry.artist?.name || "Unknown"}`,
+            draggable: false,
+          })
         );
+      });
 
-        const img = document.createElement("img");
-        img.src = src;
-        img.loading = "lazy";
-        img.decoding = "async";
-        img.alt = `Artwork by ${it.artist?.name || "Unknown"}`;
-        img.draggable = false;
+      if (!grid.dataset.galleryBound) {
+        grid.addEventListener("click", (event) => {
+          const item = event.target.closest(".gallery-item");
+          if (!item) return;
 
-        wrap.appendChild(img);
+          const index = Number(item.dataset.index || "-1");
+          if (index < 0 || index >= images.length) return;
 
-        wrap.addEventListener("click", () => {
-          window.openViewer({
-            src,
-            date: it.date || "",
-            artist: it.artist?.name || "",
-            link: it.artist?.url || "",
-            desc: it.desc || "",
-          });
-          sfx();
+          const viewer = window.MobileGalleryViewer;
+          if (viewer && typeof viewer.open === "function") {
+            viewer.open(images[index]);
+            sfx();
+          }
         });
-
-        grid.appendChild(wrap);
+        grid.dataset.galleryBound = "1";
       }
-    } catch (err) {
-      console.error(err);
-      grid.innerHTML =
-        '<div style="padding:16px;text-align:center;">Unable to load gallery.</div>';
+    } catch (error) {
+      console.error("Failed to load mobile gallery", error);
+      GalleryShared.renderLoadError(grid, error.message);
     }
   });
 })();

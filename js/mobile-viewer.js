@@ -1,5 +1,12 @@
 // 98.css viewer modal with meta + desc + W98 sounds and author title
 (function () {
+  const GalleryShared = window.GalleryShared;
+
+  if (!GalleryShared) {
+    console.error("GalleryShared is required before js/mobile-viewer.js");
+    return;
+  }
+
   function sfx() {
     try {
       if (window.W98 && typeof window.W98.play === "function") {
@@ -20,42 +27,23 @@
     function openViewer(payload) {
       if (!payload) return;
 
-      const artist = (payload.artist || "").trim();
-      const url = (payload.link || "").trim();
-      const date = (payload.date || "").trim();
+      const artist = (payload.artist?.name || "").trim();
+      const artistUrl = (payload.artist?.url || "").trim();
 
       viewerImg.src = payload.src || "";
       viewerImg.alt = artist ? `Artwork by ${artist}` : "Artwork";
-
-      // Title: show author's name (fallback to default)
       viewerTitle.textContent = artist || "Image Viewer";
 
-      // Meta
-      const parts = [];
-      if (artist && artist !== "unknown" && artist !== "-") {
-        if (url) {
-          parts.push(
-            `By <a href="${url}" target="_blank" rel="noopener noreferrer">${artist}</a>`
-          );
-        } else {
-          parts.push(`By ${artist}`);
-        }
-      }
-      if (date) parts.push(date);
-
-      if (parts.length) {
-        viewerMeta.innerHTML = parts.join(" • ");
-        viewerMeta.hidden = false;
-      } else {
-        viewerMeta.hidden = true;
-      }
-
-      if (payload.desc) {
-        viewerDesc.innerHTML = payload.desc;
-        viewerDesc.hidden = false;
-      } else {
-        viewerDesc.hidden = true;
-      }
+      GalleryShared.renderViewerMeta(viewerMeta, {
+        artistFirst: true,
+        artistName: artist,
+        artistPrefix: "By ",
+        artistUrl,
+        dateText: GalleryShared.formatDate(payload.date),
+        separator: " • ",
+        hideUnknownArtist: true,
+      });
+      GalleryShared.renderViewerDescription(viewerDesc, payload.desc);
 
       backdrop.hidden = false;
       modal.hidden = false;
@@ -69,13 +57,13 @@
       sfx();
     }
 
-    window.openViewer = openViewer;
+    window.MobileGalleryViewer = { open: openViewer };
 
     closeBtn.addEventListener("click", closeViewer);
     backdrop.addEventListener("click", closeViewer);
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && !modal.hidden) closeViewer();
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.hidden) closeViewer();
     });
   });
 })();

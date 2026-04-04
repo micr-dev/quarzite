@@ -1,11 +1,6 @@
 // Gallery: load images and open viewer window with metadata
-// - Sorts newest → oldest
-// - Popup title updates only the .title-label (preserves icon)
-// - Date formatted in English
-// - Opens at L:1017, T:107
-// - Window width locks to the IMAGE width (not text), capped to viewport
-// - Text wraps inside the window; description can contain HTML
 (function () {
+  const GalleryShared = window.GalleryShared;
   let images = [];
   let strip;
   let viewer;
@@ -13,85 +8,62 @@
   let viewerMeta;
   let viewerDesc;
 
+  if (!GalleryShared) {
+    console.error("GalleryShared is required before js/gallery.js");
+    return;
+  }
+
   const px = (v) => Math.max(0, parseFloat(v || 0));
 
-  function normalize(item) {
-    if (typeof item === "string") return { src: item };
-    return item || {};
-  }
-
-  function formatDate(value) {
-    if (!value) return null;
-    const d = new Date(value);
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      });
-    }
-    return value; // already formatted
-  }
-
-  function buildSlot(imgObj, i) {
-    const slot = document.createElement("div");
-    slot.className = "slot";
-    slot.dataset.index = String(i);
-
-    const img = document.createElement("img");
-    img.loading = "lazy";
-    img.src = imgObj.src;
-    img.alt = imgObj.title || `Image ${i + 1}`;
-    slot.appendChild(img);
-
-    return slot;
+  function buildSlot(imgObj, index) {
+    return GalleryShared.createGalleryItem(imgObj, index, {
+      className: "slot",
+      alt: (item, i) => item.title || `Image ${i + 1}`,
+    });
   }
 
   function bringToFront(win) {
     const wins = Array.from(document.querySelectorAll(".app-window"));
-    const top = wins.reduce((m, w) => {
-      const z = parseInt(getComputedStyle(w).zIndex || "0", 10);
-      return Math.max(m, isNaN(z) ? 0 : z);
+    const top = wins.reduce((max, current) => {
+      const z = parseInt(getComputedStyle(current).zIndex || "0", 10);
+      return Math.max(max, Number.isNaN(z) ? 0 : z);
     }, 0);
     win.style.zIndex = String(top + 1);
   }
 
-  // Ensure title-bar has <img.title-icon> and <span.title-label>
   function ensureTitleStructure(win) {
-    const tb = win.querySelector(".title-bar-text");
-    if (!tb) return;
+    const titleBarText = win.querySelector(".title-bar-text");
+    if (!titleBarText) return;
 
-    // Add icon if missing
-    if (!tb.querySelector(".title-icon")) {
-      const img = document.createElement("img");
-      img.className = "title-icon";
-      img.alt = "";
-      img.src = "assets/icons/favicon-96x96.png"; // gallery popup icon
-      tb.prepend(img);
+    if (!titleBarText.querySelector(".title-icon")) {
+      const icon = document.createElement("img");
+      icon.className = "title-icon";
+      icon.alt = "";
+      icon.src = "assets/icons/favicon-96x96.png";
+      titleBarText.prepend(icon);
     }
 
-    // Ensure a span.title-label exists and contains the text
-    if (!tb.querySelector(".title-label")) {
+    if (!titleBarText.querySelector(".title-label")) {
       const label = document.createElement("span");
       label.className = "title-label";
 
-      // Move non-icon child nodes into label (text nodes / other nodes)
-      const nodes = Array.from(tb.childNodes).filter((n) => {
-        return !(n.nodeType === 1 && n.classList && n.classList.contains("title-icon"));
+      const nodes = Array.from(titleBarText.childNodes).filter((node) => {
+        return !(
+          node.nodeType === 1 &&
+          node.classList &&
+          node.classList.contains("title-icon")
+        );
       });
-      nodes.forEach((n) => label.appendChild(n));
-      tb.appendChild(label);
+      nodes.forEach((node) => label.appendChild(node));
+      titleBarText.appendChild(label);
     }
   }
 
   function ensureViewer() {
     if (viewer) return viewer;
 
-    // Prefer existing DOM element if present (keeps icon from index.html)
     viewer = document.getElementById("win-viewer");
-    let created = false;
     if (!viewer) {
-      created = true;
       viewer = document.createElement("div");
       viewer.className = "window app-window";
       viewer.id = "win-viewer";
@@ -116,68 +88,56 @@
         <div class="viewer-desc" id="viewer-desc" hidden></div>
       </div>
     `;
-      const desktop = document.getElementById("desktop");
-      desktop.appendChild(viewer);
+      document.getElementById("desktop").appendChild(viewer);
     }
 
-    // ensure the title structure exists (in case index.html had partial content)
     ensureTitleStructure(viewer);
 
-    // cache elements
     viewerImg = viewer.querySelector("#viewer-img");
     viewerMeta = viewer.querySelector("#viewer-meta");
     viewerDesc = viewer.querySelector("#viewer-desc");
 
-    // Avoid adding listeners twice
     if (!viewer.dataset.galleryInit) {
       const controls = viewer.querySelector(".title-bar-controls");
       const minBtn = controls.querySelector('button[aria-label="Minimize"]');
       const closeBtn = controls.querySelector('button[aria-label="Close"]');
       const maxBtn = controls.querySelector('button[aria-label="Maximize"]');
-
       const close = () => {
         viewer.hidden = true;
       };
 
-      minBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      minBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         close();
       });
-      closeBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      closeBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         close();
       });
-      maxBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // no-op for now
+      maxBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
       });
 
-      // ESC to close (on focused viewer)
-      viewer.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") close();
+      viewer.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") close();
       });
 
-      // Draggable
       AppDrag.makeDraggable(
         viewer,
         viewer.querySelector(".title-bar"),
         document.getElementById("desktop")
       );
 
-      // Raise on focus
       viewer.addEventListener("mousedown", () => bringToFront(viewer));
       viewer.addEventListener("touchstart", () => bringToFront(viewer));
-
-      // Recalculate width on viewport resize if visible
-      const onResize = () => {
+      window.addEventListener("resize", () => {
         if (!viewer.hidden && viewerImg?.naturalWidth) {
           adjustToImageWidth();
         }
-      };
-      window.addEventListener("resize", onResize);
+      });
 
       viewer.dataset.galleryInit = "1";
     }
@@ -185,106 +145,73 @@
     return viewer;
   }
 
-  // Lock window width to the image width (not the text), capped to viewport.
   function adjustToImageWidth() {
     if (!viewer || !viewerImg || !viewerImg.naturalWidth) return;
+
     const toDesignPx =
       window.AppLayout && typeof window.AppLayout.toDesignPx === "function"
         ? window.AppLayout.toDesignPx
         : (value) => value;
-
-    const wb = viewer.querySelector(".window-body");
-    const fig = viewer.querySelector(".viewer-figure");
-
-    // Window border L+R
+    const windowBody = viewer.querySelector(".window-body");
+    const figure = viewer.querySelector(".viewer-figure");
     const winBorderLR = viewer.offsetWidth - viewer.clientWidth;
-
-    // Paddings/borders that sit left+right of the image
-    const csWB = getComputedStyle(wb);
-    const bodyLR = px(csWB.paddingLeft) + px(csWB.paddingRight);
-
-    const csFig = getComputedStyle(fig);
-    const figLR =
-      px(csFig.paddingLeft) +
-      px(csFig.paddingRight) +
-      px(csFig.borderLeftWidth) +
-      px(csFig.borderRightWidth);
-
-    // Total horizontal chrome around the image
-    const extras = winBorderLR + bodyLR + figLR;
-
-    // Image natural size
+    const bodyStyle = getComputedStyle(windowBody);
+    const bodyLR = px(bodyStyle.paddingLeft) + px(bodyStyle.paddingRight);
+    const figureStyle = getComputedStyle(figure);
+    const figureLR =
+      px(figureStyle.paddingLeft) +
+      px(figureStyle.paddingRight) +
+      px(figureStyle.borderLeftWidth) +
+      px(figureStyle.borderRightWidth);
+    const extras = winBorderLR + bodyLR + figureLR;
     const imgW = viewerImg.naturalWidth;
     const imgH = Math.max(1, viewerImg.naturalHeight);
-
-    // Caps by viewport: width (90vw) and height (image max-height: 70vh)
     const maxViewerW = Math.floor(toDesignPx(window.innerWidth * 0.9));
     const maxImgWByVW = Math.max(120, maxViewerW - extras);
     const maxImgWByVH = Math.floor(
       toDesignPx(window.innerHeight * 0.7) * (imgW / imgH)
     );
-
     const targetImgW = Math.max(120, Math.min(imgW, maxImgWByVW, maxImgWByVH));
     const targetViewerW = Math.round(targetImgW + extras);
 
     viewer.style.width = targetViewerW + "px";
-    viewer.style.height = "auto"; // let height adapt to image + text
+    viewer.style.height = "auto";
   }
 
   function openViewer(imgObj) {
     ensureViewer();
 
-    // set only the title label (preserve icon)
-    const titleLabel = viewer.querySelector(".title-label");
     const artistName = imgObj.artist?.name || "Unknown Artist";
-    if (titleLabel) titleLabel.textContent = artistName;
-    else viewer.querySelector(".title-bar-text").textContent = artistName; // fallback
-
-    // Meta line: "November 29, 2024 - by artist"
-    const dateText = formatDate(imgObj.date);
-    let metaLine = "";
-    if (dateText) metaLine += dateText;
-    if (artistName) {
-      const artistUrl = imgObj.artist?.url;
-      if (artistUrl) {
-        metaLine += ` - by <a href="${artistUrl}" target="_blank" rel="noopener noreferrer">${artistName}</a>`;
-      } else {
-        metaLine += ` - by ${artistName}`;
-      }
-    }
-    viewerMeta.innerHTML = metaLine;
-
-    // Description (allow HTML for links)
-    if (imgObj.desc) {
-      viewerDesc.innerHTML = imgObj.desc;
-      viewerDesc.hidden = false;
+    const titleLabel = viewer.querySelector(".title-label");
+    if (titleLabel) {
+      titleLabel.textContent = artistName;
     } else {
-      viewerDesc.hidden = true;
-      viewerDesc.innerHTML = "";
+      viewer.querySelector(".title-bar-text").textContent = artistName;
     }
 
-    // Fixed spawn location
+    GalleryShared.renderViewerMeta(viewerMeta, {
+      dateText: GalleryShared.formatDate(imgObj.date),
+      artistName,
+      artistUrl: imgObj.artist?.url,
+      artistPrefix: "by ",
+      separator: " - ",
+    });
+    GalleryShared.renderViewerDescription(viewerDesc, imgObj.desc);
+
     viewer.style.left = "1017px";
     viewer.style.top = "107px";
 
-    // Prepare width adjustment BEFORE setting src (handles cached images)
     const runAdjust = () => requestAnimationFrame(adjustToImageWidth);
     viewerImg.onload = runAdjust;
     viewerImg.onerror = runAdjust;
-
-    // Set image src
     viewerImg.src = imgObj.src || "";
 
-    // If already loaded from cache, adjust immediately
     if (viewerImg.complete && viewerImg.naturalWidth) {
       runAdjust();
     }
 
-    // Show and bring to front
     viewer.hidden = false;
     bringToFront(viewer);
-
-    // Focus for ESC handling
     viewer.tabIndex = -1;
     viewer.focus();
   }
@@ -294,41 +221,30 @@
     if (!strip) return;
 
     try {
-      const res = await fetch("data/gallery.json", { cache: "no-store" });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      images = await GalleryShared.loadGallery("data/gallery.json");
+      strip.replaceChildren();
+      images.forEach((imgObj, index) => {
+        strip.appendChild(buildSlot(imgObj, index));
+      });
 
-      // Normalize + sort by date (newest → oldest)
-      images = (data.images || [])
-        .map(normalize)
-        .sort((a, b) => {
-          if (!a.date) return 1;
-          if (!b.date) return -1;
-          return new Date(b.date) - new Date(a.date);
+      if (!strip.dataset.galleryBound) {
+        strip.addEventListener("click", (event) => {
+          const slot = event.target.closest(".slot");
+          if (!slot) return;
+
+          const index = Number(slot.dataset.index || "-1");
+          if (index >= 0 && index < images.length) {
+            openViewer(images[index]);
+          }
         });
-
-      strip.innerHTML = "";
-      images.forEach((imgObj, i) => {
-        const slot = buildSlot(imgObj, i);
-        strip.appendChild(slot);
-      });
-
-      // Click to open viewer
-      strip.addEventListener("click", (e) => {
-        const slot = e.target.closest(".slot");
-        if (!slot) return;
-        const idx = Number(slot.dataset.index || "-1");
-        if (idx >= 0 && idx < images.length) {
-          openViewer(images[idx]);
-        }
-      });
-    } catch (e) {
-      console.error("Failed to load gallery.json", e);
+        strip.dataset.galleryBound = "1";
+      }
+    } catch (error) {
+      console.error("Failed to load gallery.json", error);
+      GalleryShared.renderLoadError(strip, error.message);
     }
   }
 
   document.addEventListener("DOMContentLoaded", load);
-
-  // Optional export
   window.GalleryViewer = { open: openViewer };
 })();
