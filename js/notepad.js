@@ -1,5 +1,13 @@
-// Notepad: multiple random versions + classic menu + wrapping + random offset
+/**
+ * @fileoverview Windows 98-style Notepad for Quarzite desktop.
+ * Randomly selects from multiple text versions (ASCII art, reports, poems),
+ * applies Fixedsys font, and provides word-wrap toggle with menu bar.
+ */
 (function () {
+  /**
+   * Set the notepad font size and line height.
+   * @param {number} px - Font size in pixels.
+   */
   function setFontPx(px) {
     const ta = document.getElementById("notepad-text");
     ta.style.fontSize = px + "px";
@@ -7,7 +15,10 @@
     ta.style.fontFamily = '"FixedsysWin98", "Fixedsys", monospace';
   }
 
-  // Force wrapping via inline styles so CSS can't override it
+  /**
+   * Force word wrapping via inline styles so CSS can't override it.
+   * @param {boolean} isWrap - True to enable word wrap, false to disable.
+   */
   function applyWrap(isWrap) {
     const ta = document.getElementById("notepad-text");
     ta.classList.remove("notepad-wrap", "notepad-nowrap");

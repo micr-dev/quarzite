@@ -1,5 +1,15 @@
+/**
+ * @fileoverview Background theme utilities for Quarzite.
+ * Provides color conversion (hex/RGB/HSL), palette generation, and theme application.
+ * @exports window.BackgroundTheme
+ */
 (function () {
   const BackgroundTheme = {
+    /**
+     * Convert a hex color string to RGB components.
+     * @param {string} hex - Hex color string (3 or 6 digits, with or without #).
+     * @returns {{r: number, g: number, b: number}} RGB values (0-255).
+     */
     hexToRgb(hex) {
       let value = hex.replace("#", "");
       if (value.length === 3) {
@@ -16,6 +26,13 @@
       };
     },
 
+    /**
+     * Convert RGB values to HSL color space.
+     * @param {number} r - Red (0-255).
+     * @param {number} g - Green (0-255).
+     * @param {number} b - Blue (0-255).
+     * @returns {{h: number, s: number, l: number}} HSL values (h: 0-360, s/l: 0-1).
+     */
     rgbToHsl(r, g, b) {
       const red = r / 255;
       const green = g / 255;

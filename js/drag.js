@@ -1,9 +1,20 @@
-// Drag windows by title bar (mouse + touch), clamped to desktop
+/**
+ * @fileoverview Window dragging system for Quarzite desktop.
+ * Supports mouse and touch events with viewport clamping.
+ * @exports window.AppDrag
+ */
 (function () {
   function px(n) {
     return Number.parseFloat(n || "0");
   }
 
+  /**
+   * Make an element draggable by a handle, clamped within a container.
+   * Supports both mouse and touch input. Respects the current desktop scale.
+   * @param {HTMLElement} el - The element to make draggable.
+   * @param {HTMLElement} handle - The drag handle (typically the title bar).
+   * @param {HTMLElement} container - The bounding container for clamping.
+   */
   function makeDraggable(el, handle, container) {
     let dragging = false;
     let startX = 0;

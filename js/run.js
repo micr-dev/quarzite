@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Console branding for Quarzite.
+ * Displays the Quarzite logo as a CSS background image in the browser console.
+ */
 const gifAssetUrl = new URL("assets/quarzitelogo4.gif", window.location.href).href;
 
 const styles = [

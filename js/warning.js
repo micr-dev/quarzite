@@ -1,4 +1,8 @@
-// Warning popup + intercept title-bar controls
+/**
+ * @fileoverview Warning popup modal and title-bar control interceptor.
+ * Prevents minimize/maximize/close on windows and shows a warning instead.
+ * @exports window.AppWarning
+ */
 (function () {
   let backdrop, modal, msgEl, okBtn, closeBtn;
 
@@ -38,6 +42,14 @@
     modal.hidden = true;
   }
 
+  /**
+   * Attach title-bar control interceptors to all app windows.
+   * Intercepts minimize/maximize/close buttons and double-clicks,
+   * showing a warning popup instead. Windows in the exclude list are skipped.
+   * @param {HTMLElement} root - The root element to search for windows.
+   * @param {Object} [options] - Options.
+   * @param {string[]} [options.exclude=[]] - Window IDs to exclude from interception.
+   */
   function attachControls(root, { exclude = [] } = {}) {
     const excludeSet = new Set(exclude);
 

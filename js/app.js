@@ -1,4 +1,8 @@
-// Wire up dragging, tabs, warnings, and sounds (equal chance for every scenario)
+/**
+ * @fileoverview Main application bootstrap for Quarzite desktop.
+ * Wires up window dragging, tabs, warnings, sounds, and random scenario selection.
+ * Handles the easter egg tree and Clippy quote rotation.
+ */
 (function () {
   document.addEventListener("DOMContentLoaded", () => {
     const desktop = document.getElementById("desktop");

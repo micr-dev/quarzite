@@ -1,3 +1,9 @@
+/**
+ * @fileoverview Shared gallery utilities for Quarzite desktop and mobile views.
+ * Provides HTML sanitization, URL validation, date formatting, gallery loading,
+ * image item creation, and viewer metadata/description rendering.
+ * @exports window.GalleryShared
+ */
 (function () {
   const ALLOWED_RICH_TEXT_TAGS = new Set([
     "a",
@@ -13,11 +19,21 @@
     "ul",
   ]);
 
+  /**
+   * Safely convert any value to a string.
+   * @param {*} value - The value to convert.
+   * @returns {string} The string representation, or empty string for null/undefined.
+   */
   function toText(value) {
     if (value == null) return "";
     return typeof value === "string" ? value : String(value);
   }
 
+  /**
+   * Validate and sanitize a URL, allowing only http, https, and mailto protocols.
+   * @param {*} value - The URL to sanitize.
+   * @returns {string} The validated URL string, or empty string if invalid.
+   */
   function sanitizeUrl(value) {
     const href = toText(value).trim();
     if (!href) return "";
@@ -40,6 +56,11 @@
     return "";
   }
 
+  /**
+   * Recursively sanitize a DOM node, removing disallowed tags and dangerous attributes.
+   * @param {Node} node - The DOM node to sanitize.
+   * @param {Document} doc - The document context.
+   */
   function sanitizeNode(node, doc) {
     if (node.nodeType === Node.TEXT_NODE) {
       return doc.createTextNode(node.textContent || "");
@@ -83,6 +104,12 @@
     return clean;
   }
 
+  /**
+   * Render sanitized rich HTML into a target element.
+   * Strips all tags except a whitelist of safe inline/block elements.
+   * @param {HTMLElement} target - The container element.
+   * @param {string} html - The raw HTML string to sanitize and render.
+   */
   function renderRichText(target, html) {
     const doc = target.ownerDocument;
     const parser = new DOMParser();
@@ -96,6 +123,11 @@
     target.replaceChildren(fragment);
   }
 
+  /**
+   * Format a date value into a localized human-readable string.
+   * @param {string|Date} value - The date to format.
+   * @returns {string} Formatted date string (e.g. "Jan 15, 2025"), or empty string.
+   */
   function formatDate(value) {
     if (!value) return null;
 
@@ -111,6 +143,12 @@
     return value;
   }
 
+  /**
+   * Resolve an image asset path, prepending a prefix if the src is relative.
+   * @param {string} src - The image source path.
+   * @param {string} prefix - The prefix to prepend for relative paths.
+   * @returns {string} The resolved absolute or prefixed path.
+   */
   function resolveAssetPath(src, prefix) {
     const value = toText(src).trim();
     if (!value) return "";
@@ -120,6 +158,12 @@
     return `${prefix || ""}${value}`;
   }
 
+  /**
+   * Normalize a gallery item object, resolving asset paths and extracting metadata.
+   * @param {Object} item - Raw gallery item from JSON.
+   * @param {Object} options - Options including srcPrefix.
+   * @returns {Object} Normalized item with resolved src, artist, date, and desc.
+   */
   function normalizeItem(item, options) {
     const config = options || {};
     const source =
@@ -144,6 +188,11 @@
     };
   }
 
+  /**
+   * Sort gallery items by date in descending order (newest first).
+   * @param {Object[]} items - Array of gallery items with date fields.
+   * @returns {Object[]} The sorted array.
+   */
   function sortImagesByDate(items) {
     return items.slice().sort((a, b) => {
       if (!a.date) return 1;
@@ -152,6 +201,13 @@
     });
   }
 
+  /**
+   * Fetch and parse a gallery JSON file, normalizing and sorting items.
+   * @async
+   * @param {string} url - URL to the gallery JSON file.
+   * @param {Object} [options] - Options passed to normalizeItem (e.g. srcPrefix).
+   * @returns {Promise<Object[]>} Array of normalized gallery items, newest first.
+   */
   async function loadGallery(url, options) {
     let response;
     try {
@@ -180,6 +236,13 @@
     );
   }
 
+  /**
+   * Create a DOM element for a gallery image item.
+   * @param {Object} item - Normalized gallery item.
+   * @param {number} index - Index in the gallery array.
+   * @param {Object} options - Config: className, alt, ariaLabel, draggable.
+   * @returns {HTMLElement} The gallery item element with data-index attribute.
+   */
   function createGalleryItem(item, index, options) {
     const config = options || {};
     const wrapper = document.createElement("div");
@@ -207,6 +270,11 @@
     return wrapper;
   }
 
+  /**
+   * Render an error message into a target element when gallery loading fails.
+   * @param {HTMLElement} target - The container to show the error in.
+   * @param {string} message - The error message to display.
+   */
   function renderLoadError(target, message) {
     const notice = document.createElement("div");
     notice.className = "gallery-error";
@@ -216,6 +284,12 @@
     target.replaceChildren(notice);
   }
 
+  /**
+   * Determine whether to display the artist name.
+   * @param {string} name - The artist name.
+   * @param {boolean} hideUnknownArtist - Whether to hide unknown/empty artists.
+   * @returns {boolean} True if the artist name should be shown.
+   */
   function shouldShowArtist(name, hideUnknownArtist) {
     const value = toText(name).trim();
     if (!value) return false;
@@ -225,6 +299,11 @@
     return true;
   }
 
+  /**
+   * Render viewer metadata (artist, date, separator) into a target element.
+   * @param {HTMLElement} target - The metadata container.
+   * @param {Object} options - Config: artistFirst, artistName, artistPrefix, artistUrl, dateText, separator, hideUnknownArtist.
+   */
   function renderViewerMeta(target, options) {
     const config = options || {};
     const dateText = toText(config.dateText).trim();
@@ -279,6 +358,11 @@
     target.hidden = parts.length === 0;
   }
 
+  /**
+   * Render sanitized rich text description into a viewer description element.
+   * @param {HTMLElement} target - The description container.
+   * @param {string} html - Raw HTML description to sanitize and render.
+   */
   function renderViewerDescription(target, html) {
     const content = toText(html).trim();
     if (!content) {

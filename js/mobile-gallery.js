@@ -1,4 +1,8 @@
-// Load gallery from ../data/gallery.json (newest -> oldest), 1:1 contain
+/**
+ * @fileoverview Mobile gallery grid for Quarzite.
+ * Loads images from gallery.json (newest to oldest) and builds a responsive grid.
+ * Clicking an item opens it in the mobile viewer.
+ */
 (function () {
   const GalleryShared = window.GalleryShared;
   let grid;

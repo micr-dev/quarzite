@@ -1,4 +1,7 @@
-// Tile background switcher
+/**
+ * @fileoverview Tile background switcher for Quarzite desktop.
+ * Cycles through tiled background images and persists selection to localStorage.
+ */
 (function () {
   const tiles = [
     "assets/tiles/tile1.png",
@@ -13,6 +16,10 @@
   const root = document.body; // or document.documentElement
   const STORAGE_KEY = "quarziteTileIndex";
 
+  /**
+   * Apply a tile background by index.
+   * @param {number} index - Index into the tiles array.
+   */
   function applyTile(index) {
     const tile = tiles[index] || tiles[0];
     root.style.backgroundImage = `url("${tile}")`;

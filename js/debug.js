@@ -1,5 +1,8 @@
-// js/debug.js
-// Debug mode: resize grips + coordinate labels + Copy CSS
+/**
+ * @fileoverview Debug mode for Quarzite desktop.
+ * Adds resize grips with coordinate labels and CSS copy functionality.
+ * @exports window.AppDebug
+ */
 (function () {
   const grips = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
   let enabled = false;

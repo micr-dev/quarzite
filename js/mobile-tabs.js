@@ -1,4 +1,7 @@
-// Top-level tabs + inner info tabs with W98 sounds
+/**
+ * @fileoverview Mobile tab navigation for Quarzite.
+ * Manages main navigation tabs and inner info tabs with W98 click sounds.
+ */
 (function () {
   function sfx(name) {
     try {

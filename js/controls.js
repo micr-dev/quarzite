@@ -1,4 +1,7 @@
-// Volume + Animation controls
+/**
+ * @fileoverview Volume slider and animation toggle controls for Quarzite desktop.
+ * Persists volume level to localStorage and exposes it via window.AppVolume.
+ */
 (function () {
   const STORAGE_KEY = "quarziteVolume";
   const volumeBtn = document.getElementById("volume-toggle");
@@ -10,6 +13,10 @@
   const body = document.body;
 
   // --- Volume ---
+  /**
+   * Apply the volume level: update global state, persist, and update icon.
+   * @param {number} vol - Volume level (0-100).
+   */
   function applyVolume(vol) {
     window.AppVolume = vol;
     localStorage.setItem(STORAGE_KEY, vol);
@@ -21,6 +28,11 @@
     }
   }
 
+  /**
+   * Load persisted volume from localStorage and apply it.
+   * Defaults to 100 if no saved value exists.
+   * @returns {number} The loaded volume level.
+   */
   function loadVolume() {
     let vol = parseInt(localStorage.getItem(STORAGE_KEY), 10);
     if (isNaN(vol)) vol = 100;

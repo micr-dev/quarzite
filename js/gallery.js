@@ -1,6 +1,11 @@
-// Gallery: load images and open viewer window with metadata
+/**
+ * @fileoverview Desktop gallery viewer for Quarzite.
+ * Loads images from gallery.json, builds gallery strip with slots,
+ * and opens a full viewer window with metadata overlay.
+ */
 (function () {
   const GalleryShared = window.GalleryShared;
+  /** @type {Object[]} Loaded gallery images */
   let images = [];
   let strip;
   let viewer;
@@ -15,6 +20,12 @@
 
   const px = (v) => Math.max(0, parseFloat(v || 0));
 
+  /**
+   * Build a gallery slot element for an image.
+   * @param {Object} imgObj - Normalized gallery item.
+   * @param {number} index - Index in the gallery array.
+   * @returns {HTMLElement} The gallery slot element.
+   */
   function buildSlot(imgObj, index) {
     return GalleryShared.createGalleryItem(imgObj, index, {
       className: "slot",
@@ -22,6 +33,10 @@
     });
   }
 
+  /**
+   * Bring a window element to the front by setting the highest z-index.
+   * @param {HTMLElement} win - The window element to promote.
+   */
   function bringToFront(win) {
     const wins = Array.from(document.querySelectorAll(".app-window"));
     const top = wins.reduce((max, current) => {

@@ -1,3 +1,8 @@
+/**
+ * @fileoverview Clippy-style quote displayer for Quarzite desktop.
+ * Shows a random quote from a curated collection in a Windows 98-style
+ * Clippy assistant window. Includes animation and sound effects.
+ */
 const quotes = [
   "Mercy to the guilty is cruelty to the innocent.", // Adam Smith, *The Theory of Moral Sentiments* (1759)
   "The dog that weeps after it kills is no different to the dog that doesn't. My guilt will not purify me.",

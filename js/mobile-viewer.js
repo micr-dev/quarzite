@@ -1,4 +1,8 @@
-// 98.css viewer modal with meta + desc + W98 sounds and author title
+/**
+ * @fileoverview Mobile gallery viewer modal for Quarzite.
+ * Displays artwork in a fullscreen modal with metadata, description, and W98 sounds.
+ * @exports window.MobileGalleryViewer
+ */
 (function () {
   const GalleryShared = window.GalleryShared;
 

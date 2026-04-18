@@ -1,5 +1,14 @@
-// 98.css Tabs: prevent URL hash and toggle aria/hidden
+/**
+ * @fileoverview 98.css-style tab system with keyboard navigation.
+ * Manages tab selection, ARIA attributes, and panel visibility.
+ * @exports window.Tabs
+ */
 (function () {
+  /**
+   * Initialize a 98.css tab container with click and keyboard handlers.
+   * Prevents default hash navigation and manages aria-selected/hidden states.
+   * @param {HTMLElement} container - The tab container element.
+   */
   function initTabs98(container) {
     if (!container) return;
 

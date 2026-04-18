@@ -1,6 +1,14 @@
+/**
+ * @fileoverview Resolution compatibility warning for Quarzite.
+ * Detects if the viewport is too small and shows a warning modal.
+ * Users can opt out permanently via localStorage.
+ */
 (() => {
+  /** @const {string} localStorage key for opt-out preference */
   const OPT_OUT_KEY = "resWarn:optOut";
+  /** @const {number} Minimum recommended viewport width */
   const MIN_WIDTH = 1180;
+  /** @const {number} Minimum recommended viewport height */
   const MIN_HEIGHT = 700;
   // Initial load only (no resize re-check)
   const USE_RESIZE_RECHECK = false;

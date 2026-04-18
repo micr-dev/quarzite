@@ -1,4 +1,8 @@
-// Use the same files as desktop, but with a base that works from assets/mobile.html
+/**
+ * @fileoverview Mobile sound effects player for Quarzite.
+ * Uses the same sound files as desktop but with paths relative to mobile.html.
+ * @exports window.W98.play (augments desktop W98 if not already set)
+ */
 (function () {
   const base = "w98sounds/"; // relative to assets/mobile.html
 
