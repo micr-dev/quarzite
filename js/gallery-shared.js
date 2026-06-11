@@ -193,15 +193,44 @@
       }
     }
 
+    // LQIP pixelated placeholder (always rendered for CSS crossfade)
+    const lqip = document.createElement("div");
+    lqip.className = "lqip-placeholder";
+    lqip.setAttribute("aria-hidden", "true");
+
+    // Resolve LQIP path from the image src
+    const srcMatch = item.src && item.src.match(/([^/]+)\.\w+$/);
+    if (srcMatch) {
+      const basePath = item.src.substring(0, item.src.lastIndexOf("/") + 1);
+      lqip.style.backgroundImage = `url(${basePath}lqip/${srcMatch[1]}-lqip.png)`;
+    }
+    lqip.style.backgroundSize = "cover";
+    lqip.style.backgroundPosition = "center";
+    lqip.style.imageRendering = "pixelated";
+    wrapper.appendChild(lqip);
+
     const img = document.createElement("img");
     img.loading = "lazy";
     img.decoding = "async";
+    img.className = "gallery-img-full";
     img.src = item.src;
     img.alt =
       typeof config.alt === "function"
         ? config.alt(item, index)
         : item.title || `Image ${index + 1}`;
     img.draggable = config.draggable === false ? false : true;
+
+    // Fade out LQIP when real image loads
+    const fadeLqip = () => {
+      lqip.style.opacity = "0";
+    };
+    if (img.complete && img.naturalWidth) {
+      fadeLqip();
+    } else {
+      img.addEventListener("load", fadeLqip, { once: true });
+      img.addEventListener("error", fadeLqip, { once: true });
+    }
+
     wrapper.appendChild(img);
 
     return wrapper;
