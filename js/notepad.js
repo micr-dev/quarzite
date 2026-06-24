@@ -23,7 +23,7 @@
       fromFile: "assets/ascii.txt",
       fontSize: 7,
       wrap: false,
-      window: { left: 1143, top: 497, width: 382, height: 430 },
+      window: { left: 835, top: 552, width: 360, height: 402 },
     },
     {
       name: "Form Report",
@@ -32,24 +32,24 @@
         "triumph.\nI'm making a note here:\nHUGE SUCCESS.",
       fontSize: 18,
       wrap: true,
-      window: { left: 1154, top: 479, width: 500, height: 400 },
+      window: { left: 835, top: 552, width: 500, height: 400 },
     },
     {
       name: "Clippy Tip",
       text:
-        "Did you know?\n\nYou can cycle through Clippy's quotes anytime—" +
+        "Did you know?\n\nYou can cycle through Clippy's quotes anytime - " +
         "no need to reload the page.\n\nJust hold Ctrl and press the " +
         "left or right arrow keys to go backward or forward.",
       fontSize: 18,
       wrap: true,
-      window: { left: 1154, top: 479, width: 500, height: 400 },
+      window: { left: 835, top: 552, width: 500, height: 400 },
     },
     {
       name: "Cat Face",
       text: ":3 (in a non-male manipulator type of way)",
       fontSize: 24,
       wrap: true,
-      window: { left: 1154, top: 479, width: 500, height: 200 },
+      window: { left: 835, top: 552, width: 500, height: 200 },
     },
     {
       name: "Club Penguin",
@@ -62,14 +62,14 @@
         "thanks for watching make sure to sub and like",
       fontSize: 20,
       wrap: true,
-      window: { left: 1154, top: 479, width: 600, height: 350 },
+      window: { left: 835, top: 552, width: 600, height: 350 },
     },
     {
       name: "Tiny Text",
       text: "lol why are you trying to read this",
       fontSize: 6,
       wrap: true,
-      window: { left: 1493, top: 740, width: 206, height: 126 },
+      window: { left: 835, top: 552, width: 206, height: 126 },
     },
     {
       name: "3",
@@ -80,7 +80,7 @@
         "dZavLJYxCFE1fFEnhZoxCbEsfbElhVEudZavdZ5qLJ15f2YvCl4=",
       fontSize: 7,
       wrap: false,
-      window: { left: 1143, top: 497, width: 382, height: 430 },
+      window: { left: 835, top: 552, width: 360, height: 402 },
     },
   ];
 
@@ -129,10 +129,6 @@
       win.style.height = version.window.height + "px";
     }
   }
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    await pickContent();
-  });
 
   window.Notepad = { pickContent, count: versions.length };
 })();

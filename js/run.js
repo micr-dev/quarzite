@@ -1,4 +1,4 @@
-const gifAssetUrl = new URL("assets/quarzitelogo4.gif", window.location.href).href;
+const gifAssetUrl = new URL("assets/quarzite-logo.gif", window.location.href).href;
 
 const styles = [
   `background-image: url(${gifAssetUrl})`,

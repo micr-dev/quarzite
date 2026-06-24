@@ -12,6 +12,9 @@
       content="A dedicated page for my character and commissioned artwork."
     />
     <link rel="canonical" href="https://quarzite.micr.dev/" />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preload" as="image" href="quarzite-logo.gif" />
+    <link rel="preload" as="fetch" href="quarzite-low-poly.glb" type="model/gltf-binary" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://quarzite.micr.dev/" />
     <meta property="og:title" content="Quarzite" />
@@ -25,7 +28,7 @@
       rel="stylesheet"
       href="https://unpkg.com/98.css@0.1.20/dist/98.css"
     />
-    <link rel="stylesheet" href="../css/mobile.css" />
+    <link rel="stylesheet" href="../css/mobile.css?v=blender-menu-interior-1" />
   </head>
 
   <body>
@@ -68,6 +71,73 @@
             >
               <img src="icons/display_properties-2.png" alt="" /> Info
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Blender 3D viewer -->
+      <div class="window mobile-window blender-window">
+        <div class="title-bar">
+          <div class="title-bar-text">
+            <img src="icons/blender-98.png" class="title-icon blender-title-icon" alt="" />
+            Blender
+          </div>
+        </div>
+        <div class="window-body blender-window-body">
+          <div
+            class="blender-viewer"
+            data-model-src="../assets/quarzite-low-poly.glb"
+            data-model-label="Quarzite"
+          >
+            <div class="blender-top-strip" aria-hidden="true">
+              <span>File</span>
+              <span>Add</span>
+              <span>Timeline</span>
+              <span>Game</span>
+              <span>Render</span>
+              <span>Help</span>
+            </div>
+            <div class="blender-workspace">
+              <aside class="blender-left-panel">
+                <div class="blender-panel-heading">Operator</div>
+              </aside>
+              <main class="blender-viewport sunken-panel">
+                <div class="blender-viewport-label">User Persp</div>
+                <div class="blender-canvas-host" aria-label="3D model viewer"></div>
+                <div class="blender-axis-gizmo" aria-hidden="true">
+                  <span class="axis axis-x">x</span>
+                  <span class="axis axis-y">y</span>
+                  <span class="axis axis-z">z</span>
+                </div>
+                <div class="blender-selected-label">(1) Quarzite</div>
+                <div class="blender-loading">Loading Quarzite...</div>
+              </main>
+              <aside class="blender-right-panel" aria-hidden="true">
+                <div class="blender-outliner">
+                  <div class="outliner-row">[-] Scene</div>
+                  <div class="outliner-row child">[+] RenderLayers</div>
+                  <div class="outliner-row child">[+] World</div>
+                  <div class="outliner-row child">[+] Camera</div>
+                  <div class="outliner-row child">[+] Quarzite</div>
+                  <div class="outliner-row child">[+] Lamp</div>
+                </div>
+                <div class="blender-properties">
+                  <div class="properties-tabs">
+                    <span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                  <div class="properties-title">Scene</div>
+                </div>
+              </aside>
+            </div>
+            <div class="blender-timeline" aria-hidden="true">
+              <div class="timeline-track">
+                <span>-40</span><span>-20</span><span>0</span><span>20</span>
+                <span>40</span><span>60</span><span>80</span><span>100</span>
+                <span>120</span><span>140</span><span>160</span><span>180</span>
+                <span>200</span><span>220</span><span>240</span><span>260</span>
+              </div>
+              <div class="timeline-playhead"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -251,14 +321,23 @@
     <!-- Scripts -->
     <script src="../js/mobile-sounds.js" defer></script>
     <script src="../js/mobile-tabs.js" defer></script>
-    <script src="../js/gallery-shared.js" defer></script>
-    <script src="../js/mobile-gallery.js" defer></script>
+    <script src="../js/gallery-shared.js?v=loading-fix-1" defer></script>
+    <script src="../js/mobile-gallery.js?v=loading-fix-1" defer></script>
     <script src="../js/mobile-viewer.js" defer></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  <script type="module" src="../js/blender-viewer.js?v=blender-goal2-6"></script>
 
     <!-- Logo loader (set GIF as background of the div) -->
     <script>
       (function () {
-        const LOGOS = ["quarzitelogo3.gif", "quarzitelogo4.gif"];
+        const LOGOS = ["quarzite-logo.gif"];
         const el = document.getElementById("logo-img");
         if (!el) return;
         const i = Math.floor(Math.random() * LOGOS.length);

@@ -48,6 +48,81 @@
       content="A dedicated page for my character and commissioned artwork."
     />
     <link rel="canonical" href="https://quarzite.micr.dev/" />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="dns-prefetch" href="https://sleepie.uk" />
+    <link rel="preload" as="image" href="assets/quarzite-logo.gif" />
+    <link rel="preload" as="fetch" href="assets/quarzite-low-poly.glb" type="model/gltf-binary" crossorigin />
+    <script>
+      (function () {
+        var DESIGN_WIDTH = 1920;
+        var DESIGN_HEIGHT = 1080;
+        var LOGO_VISIBLE_TOP_PX = 23;
+        var LOGO_TARGET_SCREEN_TOP = 14;
+
+        window.__syncQuarziteLayoutVars = function () {
+          var scale = Math.max(
+            0.52,
+            Math.min(
+              window.innerWidth / DESIGN_WIDTH,
+              window.innerHeight / DESIGN_HEIGHT,
+              1
+            )
+          );
+          var topOffset = Math.max(
+            0,
+            Math.floor((window.innerHeight - DESIGN_HEIGHT * scale) / 2)
+          );
+
+          document.documentElement.style.setProperty(
+            "--desktop-scale",
+            scale.toFixed(4)
+          );
+          document.documentElement.style.setProperty(
+            "--desktop-offset-top",
+            topOffset + "px"
+          );
+          document.documentElement.style.setProperty(
+            "--logo-top",
+            Math.round(
+              (LOGO_TARGET_SCREEN_TOP - topOffset) / scale -
+                LOGO_VISIBLE_TOP_PX
+            ) + "px"
+          );
+
+          return scale;
+        };
+
+        window.__syncQuarziteLayoutVars();
+
+        try {
+          var tiles = [
+            "assets/tiles/tile1.png",
+            "assets/tiles/tile2.jpg",
+            "assets/tiles/tile3.jpg",
+            "assets/tiles/tile4.jpg",
+            "assets/tiles/tile5.jpg",
+            "assets/tiles/tile6.jpg",
+          ];
+          var tileIndex = parseInt(
+            localStorage.getItem("quarziteTileIndex"),
+            10
+          );
+          if (isNaN(tileIndex) || tileIndex < 0 || tileIndex >= tiles.length) {
+            tileIndex = 0;
+          }
+          var tileUrl = new URL(tiles[tileIndex], window.location.href).href;
+          document.documentElement.style.setProperty(
+            "--desktop-bg-image",
+            'url("' + tileUrl + '")'
+          );
+        } catch (_) {
+          document.documentElement.style.setProperty(
+            "--desktop-bg-image",
+            'url("assets/tiles/tile1.png")'
+          );
+        }
+      })();
+    </script>
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://quarzite.micr.dev/" />
     <meta property="og:title" content="Quarzite" />
@@ -70,7 +145,7 @@
     />
 
     <!-- Your main stylesheet -->
-    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/main.css?v=clippy-spin-polish-1" />
 
     <script>
 	(function(){
@@ -91,25 +166,33 @@
     <div class="desktop" id="desktop">
       <!-- Logo container -->
       <div class="logo" id="logo-container" aria-label="Quarzite Logo">
-        <img id="logo-img" class="logo-img" alt="Quarzite Logo" />
+        <img
+          id="logo-img"
+          class="logo-img"
+          src="assets/quarzite-logo.gif"
+          alt="Quarzite Logo"
+        />
       </div>
+      <script>
+        (function () {
+          const logo = document.getElementById("logo-container");
+          const img = document.getElementById("logo-img");
+          if (!logo || !img) return;
 
-      <!-- Easter Egg: hidden behind the Gallery window -->
-      <img
-        id="easter-egg-tree"
-        src="assets/tree.webp"
-        alt="Tree"
-        hidden
-        style="
-          position: absolute;
-          left: 480px;
-          top: 480px;
-          width: 120px;
-          height: auto;
-          z-index: 1;
-          cursor: pointer;
-        "
-      />
+          function revealLogo() {
+            window.setTimeout(() => {
+              logo.classList.add("is-ready");
+            }, 900);
+          }
+
+          if (img.complete && img.naturalWidth > 0) {
+            revealLogo();
+          } else {
+            img.addEventListener("load", revealLogo, { once: true });
+            img.addEventListener("error", revealLogo, { once: true });
+          }
+        })();
+      </script>
 
       <!-- Gallery window -->
       <div
@@ -268,6 +351,89 @@
         </div>
       </div>
 
+      <!-- Blender 3D viewer window -->
+      <div
+        class="window app-window resizable blender-window"
+        id="win-blender"
+        data-title="Blender"
+      >
+        <div class="title-bar">
+          <div class="title-bar-text">
+            <img src="assets/icons/blender-98.png" class="title-icon blender-title-icon" alt="" />
+            <span class="title-label">Blender</span>
+          </div>
+          <div class="title-bar-controls">
+            <button aria-label="Minimize"></button>
+            <button aria-label="Maximize"></button>
+            <button aria-label="Close"></button>
+          </div>
+        </div>
+        <div class="window-body blender-window-body">
+          <div
+            class="blender-viewer"
+            data-model-src="assets/quarzite-low-poly.glb"
+            data-model-label="Quarzite"
+          >
+            <div class="blender-top-strip">
+              <span>File</span>
+              <span>Add</span>
+              <span>Timeline</span>
+              <span>Game</span>
+              <span>Render</span>
+              <span>Help</span>
+              <button
+                type="button"
+                class="blender-spin-toggle"
+                aria-pressed="true"
+              >
+                Stop
+              </button>
+            </div>
+            <div class="blender-workspace">
+              <aside class="blender-left-panel">
+                <div class="blender-panel-heading">Operator</div>
+              </aside>
+              <main class="blender-viewport sunken-panel">
+                <div class="blender-viewport-label">User Persp</div>
+                <div class="blender-canvas-host" aria-label="3D model viewer"></div>
+                <div class="blender-axis-gizmo" aria-hidden="true">
+                  <span class="axis axis-x">x</span>
+                  <span class="axis axis-y">y</span>
+                  <span class="axis axis-z">z</span>
+                </div>
+                <div class="blender-selected-label">(1) Quarzite</div>
+                <div class="blender-loading">Loading Quarzite...</div>
+              </main>
+              <aside class="blender-right-panel" aria-hidden="true">
+                <div class="blender-outliner">
+                  <div class="outliner-row">[-] Scene</div>
+                  <div class="outliner-row child">[+] RenderLayers</div>
+                  <div class="outliner-row child">[+] World</div>
+                  <div class="outliner-row child">[+] Camera</div>
+                  <div class="outliner-row child">[+] Quarzite</div>
+                  <div class="outliner-row child">[+] Lamp</div>
+                </div>
+                <div class="blender-properties">
+                  <div class="properties-tabs">
+                    <span></span><span></span><span></span><span></span><span></span>
+                  </div>
+                  <div class="properties-title">Scene</div>
+                </div>
+              </aside>
+            </div>
+            <div class="blender-timeline" aria-hidden="true">
+              <div class="timeline-track">
+                <span>-40</span><span>-20</span><span>0</span><span>20</span>
+                <span>40</span><span>60</span><span>80</span><span>100</span>
+                <span>120</span><span>140</span><span>160</span><span>180</span>
+                <span>200</span><span>220</span><span>240</span><span>260</span>
+              </div>
+              <div class="timeline-playhead"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Clippy -->
       <div class="window app-window" id="win-clippy" data-title="Clippy" hidden>
         <div class="title-bar">
@@ -343,7 +509,7 @@
         </div>
         <div class="window-body paint-body">
           <iframe
-            src="jspaint/index.html"
+            data-src="jspaint/index.html"
             class="paint-frame"
             title="MS Paint"
           ></iframe>
@@ -501,50 +667,28 @@
 
     <!-- Scripts (order matters) -->
     <script src="js/run.js"></script>
-    <script src="js/layout.js"></script>
+    <script src="js/layout.js?v=loading-fix-1"></script>
     <script src="js/drag.js"></script>
     <script src="js/tabs.js"></script>
     <script src="js/warning.js"></script>
     <script src="js/debug.js"></script>
-    <script src="js/clippy.js"></script>
-    <script src="js/notepad.js"></script>
-    <script src="js/gallery-shared.js"></script>
-    <script src="js/gallery.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/tiles.js"></script>
+    <script src="js/clippy.js?v=popup-spawn-2"></script>
+    <script src="js/notepad.js?v=popup-spawn-1"></script>
+    <script src="js/gallery-shared.js?v=loading-fix-3"></script>
+    <script src="js/gallery.js?v=loading-fix-5"></script>
+    <script src="js/app.js?v=random-window-fix-1"></script>
+    <script src="js/tiles.js?v=loading-fix-1"></script>
     <script src="js/controls.js"></script>
     <script src="js/sounds.js"></script>
     <script src="js/res-warning.js"></script>
-
-    <!-- Logo loader -->
-    <script>
-      (function () {
-        const LOGOS = [
-          "assets/quarzitelogo3.gif",
-          "assets/quarzitelogo4.gif",
-        ];
-        const img = document.getElementById("logo-img");
-        if (!img) return;
-
-        function setLogo(indexOrSrc) {
-          const src =
-            typeof indexOrSrc === "number"
-              ? LOGOS[
-                  Math.max(0, Math.min(LOGOS.length - 1, indexOrSrc | 0))
-                ]
-              : String(indexOrSrc);
-          const pre = new Image();
-          pre.onload = () => (img.src = src);
-          pre.onerror = () => (img.src = src);
-          pre.src = src;
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
         }
-
-        document.addEventListener("DOMContentLoaded", () => {
-          const i = Math.floor(Math.random() * LOGOS.length);
-          setLogo(i);
-          window.setQuarziteLogo = setLogo;
-        });
-      })();
+      }
     </script>
+    <script type="module" src="js/blender-viewer.js?v=viewer-controls-3"></script>
   </body>
 </html>

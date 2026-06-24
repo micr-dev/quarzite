@@ -18,7 +18,74 @@
   function buildSlot(imgObj, index) {
     return GalleryShared.createGalleryItem(imgObj, index, {
       className: "slot",
+      eagerCount: 12,
+      width: 200,
+      height: 200,
       alt: (item, i) => item.title || `Image ${i + 1}`,
+    });
+  }
+
+  function nextPaintFrame() {
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(resolve));
+    });
+  }
+
+  function waitForDecodeOrTimeout(img) {
+    if (!(img.naturalWidth > 0 && typeof img.decode === "function")) {
+      return Promise.resolve();
+    }
+
+    return Promise.race([
+      img.decode().catch(() => {}),
+      new Promise((resolve) => {
+        window.setTimeout(resolve, 800);
+      }),
+    ]);
+  }
+
+  async function waitForImage(img) {
+    if (!(img.complete && img.naturalWidth > 0)) {
+      await new Promise((resolve) => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+      });
+    }
+
+    // The load event can fire before the browser has decoded and painted the
+    // image. Waiting through decode plus two frames prevents a partial grid
+    // flash during cold page startup.
+    await waitForDecodeOrTimeout(img);
+
+    await nextPaintFrame();
+  }
+
+  function waitForMinimumStartupDelay() {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, 450);
+    });
+  }
+
+  function waitForFallbackReveal() {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, 1500);
+    });
+  }
+
+  function revealWhenVisibleImagesAreReady() {
+    const visibleImages = Array.from(strip.querySelectorAll(".slot img")).slice(
+      0,
+      12
+    );
+
+    Promise.race([
+      Promise.all([
+        Promise.all(visibleImages.map(waitForImage)),
+        waitForMinimumStartupDelay(),
+      ]),
+      waitForFallbackReveal(),
+    ]).then(() => {
+      strip.classList.add("is-ready");
     });
   }
 
@@ -222,10 +289,12 @@
 
     try {
       images = await GalleryShared.loadGallery("data/gallery.json");
+      strip.classList.remove("is-ready");
       strip.replaceChildren();
       images.forEach((imgObj, index) => {
         strip.appendChild(buildSlot(imgObj, index));
       });
+      revealWhenVisibleImagesAreReady();
 
       if (!strip.dataset.galleryBound) {
         strip.addEventListener("click", (event) => {

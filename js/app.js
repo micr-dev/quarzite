@@ -1,4 +1,4 @@
-// Wire up dragging, tabs, warnings, and sounds (equal chance for every scenario)
+// Wire up dragging, tabs, warnings, and sounds.
 (function () {
   document.addEventListener("DOMContentLoaded", () => {
     const desktop = document.getElementById("desktop");
@@ -6,38 +6,32 @@
     const clippyWin = document.getElementById("win-clippy");
     const notepadWin = document.getElementById("win-notepad");
     const paintWin = document.getElementById("win-paint");
+    const paintFrame = paintWin?.querySelector(".paint-frame");
     const galleryWin = document.getElementById("win-viewer");
 
-    // --- Easter Egg (tree behind gallery) ---
-    const egg = document.getElementById("easter-egg-tree");
-    if (egg) {
-      if (localStorage.getItem("eggFound") === "1") {
-        egg.remove();
-      } else {
-        egg.hidden = false;
-        egg.addEventListener("click", () => {
-          try {
-            W98?.play("microsoft");
-          } catch {}
-          egg.remove();
-          localStorage.setItem("eggFound", "1");
-        });
-      }
+    // Restore the original scenario randomness while keeping heavyweight Paint
+    // lazy-loaded until it is actually selected.
+    const clippyCount =
+      (window.Clippy && typeof Clippy.count === "number" && Clippy.count) || 22;
+    const notepadCount =
+      (window.Notepad && typeof Notepad.count === "number" && Notepad.count) ||
+      5;
+    const scenarios = [];
+
+    for (let i = 0; i < clippyCount; i += 1) {
+      scenarios.push({ type: "clippy", index: i });
+    }
+    for (let i = 0; i < notepadCount; i += 1) {
+      scenarios.push({ type: "notepad", index: i });
+    }
+    for (let i = 0; i < 3; i += 1) {
+      scenarios.push({ type: "paint" });
     }
 
-    // --- Equal-scenario randomness ---
-    // Use exported counts if available; fallback to known numbers
-    const CLIPPY_COUNT =
-      (window.Clippy && typeof Clippy.count === "number" && Clippy.count) || 22;
-    const NOTEPAD_COUNT =
-      (window.Notepad && typeof Notepad.count === "number" && Notepad.count) || 5;
-
-    const scenarios = [];
-    for (let i = 0; i < CLIPPY_COUNT; i++) scenarios.push({ type: "clippy", index: i });
-    for (let i = 0; i < NOTEPAD_COUNT; i++) scenarios.push({ type: "notepad", index: i });
-    for (let i = 0; i < 3; i++) scenarios.push({ type: "paint" }); // Paint x3
-
-    const pick = scenarios[Math.floor(Math.random() * scenarios.length)];
+    const pick = scenarios[Math.floor(Math.random() * scenarios.length)] || {
+      type: "notepad",
+      index: 0,
+    };
 
     if (pick.type === "clippy") {
       clippyWin.hidden = false;
@@ -54,6 +48,9 @@
       paintWin.hidden = false;
       clippyWin.hidden = true;
       notepadWin.hidden = true;
+      if (paintFrame && !paintFrame.src) {
+        paintFrame.src = paintFrame.dataset.src;
+      }
     }
 
     // Draggable windows
@@ -78,7 +75,7 @@
     // Warning on title bar controls
     AppWarning.attachControls(desktop, { exclude: ["win-viewer"] });
 
-    // ✅ Play CHORD.mp3 when warning modal appears
+    // Play CHORD.mp3 when warning modal appears
     const warning = document.getElementById("warning");
     if (warning) {
       const observer = new MutationObserver(() => {
@@ -89,7 +86,7 @@
       observer.observe(warning, { attributes: true, attributeFilter: ["hidden"] });
     }
 
-    // ✅ Play RECYCLE.mp3 when changing tileset
+    // Play RECYCLE.mp3 when changing tileset
     const tileBtn = document.getElementById("tile-toggle");
     if (tileBtn) {
       tileBtn.addEventListener("click", () => {
@@ -97,7 +94,7 @@
       });
     }
 
-    // ✅ Play hide-bar sound when closing/minimizing gallery popup
+    // Play hide-bar sound when closing/minimizing gallery popup
     if (galleryWin) {
       const controls = galleryWin.querySelector(".title-bar-controls");
       if (controls) {
@@ -113,7 +110,7 @@
       }
     }
 
-    // ✅ Play click sound for any other button/object
+    // Play click sound for any other button/object
     document.body.addEventListener("click", (e) => {
       if (
         e.target.closest("button, .slot, a") &&

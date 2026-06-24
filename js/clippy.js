@@ -115,7 +115,7 @@ function positionClippy() {
   const win = document.getElementById("win-clippy");
   if (!win) return;
 
-  const base = { left: 1155, top: 490, width: 357, height: 310 };
+  const base = { left: 850, top: 552, width: 360, height: 310 };
 
   win.style.left = randomOffset(base.left) + "px";
   win.style.top = randomOffset(base.top) + "px";

@@ -1,4 +1,6 @@
 (function () {
+  let lazyImageObserver;
+
   const ALLOWED_RICH_TEXT_TAGS = new Set([
     "a",
     "b",
@@ -96,6 +98,34 @@
     target.replaceChildren(fragment);
   }
 
+  function loadDeferredImage(img) {
+    if (!img.dataset.src) return;
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  }
+
+  function observeDeferredImage(img) {
+    if (!("IntersectionObserver" in window)) {
+      loadDeferredImage(img);
+      return;
+    }
+
+    if (!lazyImageObserver) {
+      lazyImageObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            lazyImageObserver.unobserve(entry.target);
+            loadDeferredImage(entry.target);
+          });
+        },
+        { rootMargin: "240px 0px" }
+      );
+    }
+
+    lazyImageObserver.observe(img);
+  }
+
   function formatDate(value) {
     if (!value) return null;
 
@@ -182,6 +212,7 @@
 
   function createGalleryItem(item, index, options) {
     const config = options || {};
+    const eagerCount = Number.isFinite(config.eagerCount) ? config.eagerCount : 0;
     const wrapper = document.createElement("div");
     wrapper.className = config.className || "gallery-item";
     wrapper.dataset.index = String(index);
@@ -193,45 +224,67 @@
       }
     }
 
-    // LQIP pixelated placeholder (always rendered for CSS crossfade)
-    const lqip = document.createElement("div");
-    lqip.className = "lqip-placeholder";
-    lqip.setAttribute("aria-hidden", "true");
+    const eager = index < eagerCount;
+    let lqip = null;
 
-    // Resolve LQIP path from the image src
-    const srcMatch = item.src && item.src.match(/([^/]+)\.\w+$/);
-    if (srcMatch) {
-      const basePath = item.src.substring(0, item.src.lastIndexOf("/") + 1);
-      lqip.style.backgroundImage = `url(${basePath}lqip/${srcMatch[1]}-lqip.png)`;
+    // Keep LQIP for deferred images, but skip it for above-fold eager images.
+    // The eager images load quickly enough that the pixelated preview reads as
+    // a loading artifact instead of a useful placeholder.
+    if (!eager) {
+      lqip = document.createElement("div");
+      lqip.className = "lqip-placeholder";
+      lqip.setAttribute("aria-hidden", "true");
+
+      const srcMatch = item.src && item.src.match(/([^/]+)\.\w+$/);
+      if (srcMatch) {
+        const basePath = item.src.substring(0, item.src.lastIndexOf("/") + 1);
+        lqip.style.backgroundImage = `url(${basePath}lqip/${srcMatch[1]}-lqip.png)`;
+      }
+      lqip.style.backgroundSize = "cover";
+      lqip.style.backgroundPosition = "center";
+      lqip.style.imageRendering = "pixelated";
+      wrapper.appendChild(lqip);
     }
-    lqip.style.backgroundSize = "cover";
-    lqip.style.backgroundPosition = "center";
-    lqip.style.imageRendering = "pixelated";
-    wrapper.appendChild(lqip);
 
     const img = document.createElement("img");
-    img.loading = "lazy";
+    img.loading = eager ? "eager" : "lazy";
     img.decoding = "async";
+    img.fetchPriority = eager ? "high" : "low";
+    img.width = config.width || 200;
+    img.height = config.height || 200;
     img.className = "gallery-img-full";
-    img.src = item.src;
     img.alt =
       typeof config.alt === "function"
         ? config.alt(item, index)
         : item.title || `Image ${index + 1}`;
     img.draggable = config.draggable === false ? false : true;
 
-    // Fade out LQIP when real image loads
+    // Keep the low quality preview until the final image is actually available.
     const fadeLqip = () => {
+      if (!lqip) return;
       lqip.style.opacity = "0";
+      window.setTimeout(() => {
+        if (lqip.parentNode) lqip.hidden = true;
+      }, 350);
+    };
+    const markError = () => {
+      wrapper.classList.add("is-image-error");
     };
     if (img.complete && img.naturalWidth) {
       fadeLqip();
     } else {
       img.addEventListener("load", fadeLqip, { once: true });
-      img.addEventListener("error", fadeLqip, { once: true });
+      img.addEventListener("error", markError, { once: true });
     }
 
     wrapper.appendChild(img);
+
+    if (eager) {
+      img.src = item.src;
+    } else {
+      img.dataset.src = item.src;
+      observeDeferredImage(img);
+    }
 
     return wrapper;
   }

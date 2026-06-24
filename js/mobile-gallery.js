@@ -31,6 +31,9 @@
         grid.appendChild(
           GalleryShared.createGalleryItem(item, index, {
             className: "gallery-item",
+            eagerCount: 4,
+            width: 200,
+            height: 200,
             alt: (entry) => `Artwork by ${entry.artist?.name || "Unknown"}`,
             ariaLabel: (entry) =>
               `Artwork by ${entry.artist?.name || "Unknown"}`,
