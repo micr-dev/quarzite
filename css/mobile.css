@@ -613,3 +613,55 @@ body {
 [hidden] {
   display: none !important;
 }
+
+/* ------------------------------
+   Boneyard skeleton loading (mobile)
+   https://github.com/0xGF/boneyard
+--------------------------------*/
+.gallery-grid .gallery-item .bone-slot {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.bone-slot.bone-fade-out {
+  opacity: 0;
+}
+
+.bone {
+  position: absolute;
+  background: rgba(128, 128, 128, 0.3);
+  overflow: hidden;
+}
+
+.bone-slot[data-bone-animate="shimmer"] .bone::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(220, 220, 220, 0.45) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: bone-shimmer 1.6s ease-in-out infinite;
+  animation-delay: var(--bone-stagger-delay, 0ms);
+}
+
+@keyframes bone-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bone-slot[data-bone-animate="shimmer"] .bone::after {
+    animation: none;
+  }
+}

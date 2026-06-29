@@ -22,6 +22,11 @@
     if (!grid) return;
 
     try {
+      // Pre-load boneyard skeleton data before rendering gallery items
+      if (window.Boneyard) {
+        await window.Boneyard.loadBones("../data/gallery.bones.json");
+      }
+
       images = await GalleryShared.loadGallery("../data/gallery.json", {
         srcPrefix: "../",
       });

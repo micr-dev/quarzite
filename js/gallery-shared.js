@@ -225,6 +225,18 @@
     }
 
     const eager = index < eagerCount;
+
+    // Boneyard skeleton: render a shimmer-animated bone placeholder
+    // that fades out when the image finishes loading.
+    let skeleton = null;
+    if (
+      window.Boneyard &&
+      typeof window.Boneyard.createSkeletonSlot === "function"
+    ) {
+      skeleton = window.Boneyard.createSkeletonSlot(index);
+      wrapper.appendChild(skeleton);
+    }
+
     let lqip = null;
 
     // Keep LQIP for deferred images, but skip it for above-fold eager images.
@@ -270,11 +282,21 @@
     const markError = () => {
       wrapper.classList.add("is-image-error");
     };
+
+    // Wire up skeleton + LQIP removal on image load/error.
     if (img.complete && img.naturalWidth) {
       fadeLqip();
+      if (skeleton) {
+        window.requestAnimationFrame(() =>
+          window.Boneyard.attachToGalleryItem(wrapper, img, skeleton)
+        );
+      }
     } else {
       img.addEventListener("load", fadeLqip, { once: true });
       img.addEventListener("error", markError, { once: true });
+      if (skeleton) {
+        window.Boneyard.attachToGalleryItem(wrapper, img, skeleton);
+      }
     }
 
     wrapper.appendChild(img);
