@@ -3,37 +3,12 @@
 // Renders animated bone placeholders in gallery slots until images finish loading.
 (function () {
   let bonesConfig = null;
-  let breakpointData = null;
-
-  function pickBreakpoint(config, viewportWidth) {
-    if (!config || !config.breakpoints) return null;
-    var keys = Object.keys(config.breakpoints)
-      .map(Number)
-      .filter(function (k) {
-        return !isNaN(k);
-      })
-      .sort(function (a, b) {
-        return a - b;
-      });
-
-    var chosen = null;
-    for (var i = 0; i < keys.length; i++) {
-      if (viewportWidth >= keys[i]) {
-        chosen = keys[i];
-      } else {
-        break;
-      }
-    }
-    if (chosen === null) chosen = keys[0];
-    return chosen !== null ? config.breakpoints[chosen] : null;
-  }
 
   async function loadBones(url) {
     try {
       var response = await fetch(url, { cache: "no-store" });
       if (!response.ok) return null;
       bonesConfig = await response.json();
-      breakpointData = pickBreakpoint(bonesConfig, window.innerWidth);
       return bonesConfig;
     } catch (_) {
       return null;
@@ -56,26 +31,15 @@
       );
     }
 
-    if (breakpointData && breakpointData.bones && breakpointData.bones[index]) {
-      var bone = breakpointData.bones[index];
-      var boneEl = document.createElement("div");
-      boneEl.className = "bone";
-      boneEl.style.left = bone.x + "%";
-      boneEl.style.top = bone.y + "%";
-      boneEl.style.width = bone.w + "%";
-      boneEl.style.height = bone.h + "%";
-      if (bone.r) {
-        boneEl.style.borderRadius = Math.min(bone.r, 8) + "px";
-      }
-      wrapper.appendChild(boneEl);
-    } else {
-      var fallback = document.createElement("div");
-      fallback.className = "bone";
-      fallback.style.position = "absolute";
-      fallback.style.inset = "4px";
-      fallback.style.borderRadius = "4px";
-      wrapper.appendChild(fallback);
-    }
+    // The gallery creates one skeleton wrapper per image slot. The source
+    // config describes a whole grid, so its grid coordinates must not be
+    // applied inside an individual slot.
+    var boneEl = document.createElement("div");
+    boneEl.className = "bone";
+    boneEl.style.position = "absolute";
+    boneEl.style.inset = "0";
+    boneEl.style.borderRadius = "4px";
+    wrapper.appendChild(boneEl);
 
     return wrapper;
   }
@@ -112,12 +76,6 @@
     }
   }
 
-  function onResize() {
-    if (!bonesConfig) return;
-    breakpointData = pickBreakpoint(bonesConfig, window.innerWidth);
-  }
-
-  window.addEventListener("resize", onResize, { passive: true });
 
   window.Boneyard = {
     loadBones: loadBones,

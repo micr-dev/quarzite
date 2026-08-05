@@ -6,46 +6,5 @@
   "shimmerColor": "rgba(220, 220, 220, 0.4)",
   "speed": 1.6,
   "stagger": 60,
-  "description": "Skeleton loading bones for quarzite gallery grid. Each slot renders a shimmer-animated placeholder bone until its image finishes loading. Generated from the 200x200px desktop grid (680px window) and 128px mobile grid (375px viewport).",
-  "breakpoints": {
-    "375": {
-      "name": "gallery",
-      "viewportWidth": 375,
-      "width": 272,
-      "height": 408,
-      "cols": 2,
-      "rows": 3,
-      "slotSize": 128,
-      "gap": 8,
-      "bones": [
-        { "x": 0.0, "y": 0.0, "w": 47.0588, "h": 31.3725, "r": 4 },
-        { "x": 50.0, "y": 0.0, "w": 47.0588, "h": 31.3725, "r": 4 },
-        { "x": 0.0, "y": 33.3333, "w": 47.0588, "h": 31.3725, "r": 4 },
-        { "x": 50.0, "y": 33.3333, "w": 47.0588, "h": 31.3725, "r": 4 },
-        { "x": 0.0, "y": 66.6667, "w": 47.0588, "h": 31.3725, "r": 4 },
-        { "x": 50.0, "y": 66.6667, "w": 47.0588, "h": 31.3725, "r": 4 }
-      ]
-    },
-    "680": {
-      "name": "gallery",
-      "viewportWidth": 680,
-      "width": 616,
-      "height": 616,
-      "cols": 3,
-      "rows": 3,
-      "slotSize": 200,
-      "gap": 8,
-      "bones": [
-        { "x": 0.0, "y": 0.0, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 33.7662, "y": 0.0, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 67.5325, "y": 0.0, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 0.0, "y": 33.7662, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 33.7662, "y": 33.7662, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 67.5325, "y": 33.7662, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 0.0, "y": 67.5325, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 33.7662, "y": 67.5325, "w": 32.4675, "h": 32.4675, "r": 4 },
-        { "x": 67.5325, "y": 67.5325, "w": 32.4675, "h": 32.4675, "r": 4 }
-      ]
-    }
-  }
+  "description": "Skeleton loading bones for the Quarzite gallery. Each image slot renders one full-size shimmer-animated placeholder until its image finishes loading."
 }
