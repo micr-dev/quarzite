@@ -151,7 +151,7 @@
       <div class="window-body viewer-body">
         <figure class="viewer-figure">
           <img id="viewer-img" alt="" />
-          <video id="viewer-video" controls playsinline hidden></video>
+          <video id="viewer-video" playsinline hidden></video>
         </figure>
         <div class="viewer-meta" id="viewer-meta"></div>
         <div class="viewer-desc" id="viewer-desc" hidden></div>
@@ -285,6 +285,7 @@
     viewerImg.hidden = isVideo;
     viewerVideo.hidden = !isVideo;
     viewerVideo.pause();
+    viewerVideo.loop = true;
     viewerVideo.removeAttribute("src");
     viewerImg.onload = runAdjust;
     viewerImg.onerror = runAdjust;

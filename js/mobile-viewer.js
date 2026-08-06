@@ -35,6 +35,7 @@
       viewerImg.hidden = isVideo;
       viewerVideo.hidden = !isVideo;
       viewerVideo.pause();
+      viewerVideo.loop = true;
       viewerVideo.removeAttribute("src");
       if (isVideo) {
         viewerVideo.src = payload.src || "";
