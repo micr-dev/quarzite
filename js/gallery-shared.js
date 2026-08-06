@@ -126,6 +126,10 @@
     lazyImageObserver.observe(img);
   }
 
+  function isVideoItem(item) {
+    return item && (item.type === "video" || /\.mp4(?:$|[?#])/i.test(item.src));
+  }
+
   function formatDate(value) {
     if (!value) return null;
 
@@ -235,6 +239,26 @@
     ) {
       skeleton = window.Boneyard.createSkeletonSlot(index);
       wrapper.appendChild(skeleton);
+    }
+
+    if (isVideoItem(item)) {
+      const video = document.createElement("video");
+      video.className = "gallery-img-full gallery-video-preview";
+      video.muted = true;
+      video.playsInline = true;
+      video.preload = "metadata";
+      video.width = config.width || 200;
+      video.height = config.height || 200;
+      video.setAttribute(
+        "aria-label",
+        typeof config.alt === "function"
+          ? config.alt(item, index)
+          : item.title || `Video ${index + 1}`
+      );
+      video.src = item.src;
+      if (skeleton) skeleton.remove();
+      wrapper.appendChild(video);
+      return wrapper;
     }
 
     let lqip = null;
@@ -398,6 +422,7 @@
   window.GalleryShared = {
     createGalleryItem,
     formatDate,
+    isVideoItem,
     loadGallery,
     normalizeItem,
     renderLoadError,

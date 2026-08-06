@@ -20,6 +20,7 @@
     const modal = document.getElementById("viewer-modal");
     const closeBtn = document.getElementById("viewer-close");
     const viewerImg = document.getElementById("viewer-img");
+    const viewerVideo = document.getElementById("viewer-video");
     const viewerMeta = document.getElementById("viewer-meta");
     const viewerDesc = document.getElementById("viewer-desc");
     const viewerTitle = document.getElementById("viewer-title");
@@ -30,8 +31,18 @@
       const artist = (payload.artist?.name || "").trim();
       const artistUrl = (payload.artist?.url || "").trim();
 
-      viewerImg.src = payload.src || "";
-      viewerImg.alt = artist ? `Artwork by ${artist}` : "Artwork";
+      const isVideo = GalleryShared.isVideoItem(payload);
+      viewerImg.hidden = isVideo;
+      viewerVideo.hidden = !isVideo;
+      viewerVideo.pause();
+      viewerVideo.removeAttribute("src");
+      if (isVideo) {
+        viewerVideo.src = payload.src || "";
+        viewerVideo.load();
+      } else {
+        viewerImg.src = payload.src || "";
+        viewerImg.alt = artist ? `Artwork by ${artist}` : "Artwork";
+      }
       viewerTitle.textContent = artist || "Image Viewer";
 
       GalleryShared.renderViewerMeta(viewerMeta, {
@@ -48,12 +59,15 @@
       backdrop.hidden = false;
       modal.hidden = false;
       document.body.style.overflow = "hidden";
+      if (isVideo) viewerVideo.play().catch(() => {});
     }
 
     function closeViewer() {
       backdrop.hidden = true;
       modal.hidden = true;
       document.body.style.overflow = "";
+      viewerVideo.pause();
+      viewerVideo.removeAttribute("src");
       sfx();
     }
 

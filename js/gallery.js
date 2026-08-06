@@ -5,6 +5,7 @@
   let strip;
   let viewer;
   let viewerImg;
+  let viewerVideo;
   let viewerMeta;
   let viewerDesc;
 
@@ -150,6 +151,7 @@
       <div class="window-body viewer-body">
         <figure class="viewer-figure">
           <img id="viewer-img" alt="" />
+          <video id="viewer-video" controls playsinline hidden></video>
         </figure>
         <div class="viewer-meta" id="viewer-meta"></div>
         <div class="viewer-desc" id="viewer-desc" hidden></div>
@@ -161,6 +163,7 @@
     ensureTitleStructure(viewer);
 
     viewerImg = viewer.querySelector("#viewer-img");
+    viewerVideo = viewer.querySelector("#viewer-video");
     viewerMeta = viewer.querySelector("#viewer-meta");
     viewerDesc = viewer.querySelector("#viewer-desc");
 
@@ -171,6 +174,8 @@
       const maxBtn = controls.querySelector('button[aria-label="Maximize"]');
       const close = () => {
         viewer.hidden = true;
+        viewerVideo.pause();
+        viewerVideo.removeAttribute("src");
       };
 
       minBtn.addEventListener("click", (event) => {
@@ -201,7 +206,10 @@
       viewer.addEventListener("mousedown", () => bringToFront(viewer));
       viewer.addEventListener("touchstart", () => bringToFront(viewer));
       window.addEventListener("resize", () => {
-        if (!viewer.hidden && viewerImg?.naturalWidth) {
+        if (
+          !viewer.hidden &&
+          (viewerImg?.naturalWidth || viewerVideo?.videoWidth)
+        ) {
           adjustToImageWidth();
         }
       });
@@ -213,7 +221,11 @@
   }
 
   function adjustToImageWidth() {
-    if (!viewer || !viewerImg || !viewerImg.naturalWidth) return;
+    const isVideo = viewerVideo && !viewerVideo.hidden;
+    const media = isVideo ? viewerVideo : viewerImg;
+    const mediaWidth = isVideo ? viewerVideo.videoWidth : viewerImg?.naturalWidth;
+    const mediaHeight = isVideo ? viewerVideo.videoHeight : viewerImg?.naturalHeight;
+    if (!viewer || !media || !mediaWidth) return;
 
     const toDesignPx =
       window.AppLayout && typeof window.AppLayout.toDesignPx === "function"
@@ -231,8 +243,8 @@
       px(figureStyle.borderLeftWidth) +
       px(figureStyle.borderRightWidth);
     const extras = winBorderLR + bodyLR + figureLR;
-    const imgW = viewerImg.naturalWidth;
-    const imgH = Math.max(1, viewerImg.naturalHeight);
+    const imgW = mediaWidth;
+    const imgH = Math.max(1, mediaHeight);
     const maxViewerW = Math.floor(toDesignPx(window.innerWidth * 0.9));
     const maxImgWByVW = Math.max(120, maxViewerW - extras);
     const maxImgWByVH = Math.floor(
@@ -269,12 +281,22 @@
     viewer.style.top = "107px";
 
     const runAdjust = () => requestAnimationFrame(adjustToImageWidth);
+    const isVideo = GalleryShared.isVideoItem(imgObj);
+    viewerImg.hidden = isVideo;
+    viewerVideo.hidden = !isVideo;
+    viewerVideo.pause();
+    viewerVideo.removeAttribute("src");
     viewerImg.onload = runAdjust;
     viewerImg.onerror = runAdjust;
-    viewerImg.src = imgObj.src || "";
 
-    if (viewerImg.complete && viewerImg.naturalWidth) {
-      runAdjust();
+    if (isVideo) {
+      viewerVideo.onloadedmetadata = runAdjust;
+      viewerVideo.src = imgObj.src || "";
+      viewerVideo.load();
+      viewerVideo.play().catch(() => {});
+    } else {
+      viewerImg.src = imgObj.src || "";
+      if (viewerImg.complete && viewerImg.naturalWidth) runAdjust();
     }
 
     viewer.hidden = false;

@@ -238,6 +238,15 @@
         "name": "MrDetective",
         "url": "https://vgen.co/MrDetective"
       }
+    },
+    {
+      "src": "assets/vermitian-2026-08-06.webm",
+      "date": "2026-08-06",
+      "type": "video",
+      "artist": {
+        "name": "vermitian",
+        "url": ""
+      }
     }
   ]
 }
