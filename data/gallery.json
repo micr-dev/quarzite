@@ -121,7 +121,7 @@
       "date": "2025-09-12",
       "artist": {
         "name": "maruya",
-        "url": "https://vgen.co/kassabakeki"
+        "url": "https://ko-fi.com/kassabakekii"
       }
     },
     {
@@ -211,7 +211,7 @@
       "date": "2026-03-02",
       "artist": {
         "name": "maruya",
-        "url": "https://vgen.co/kassabakeki"
+        "url": "https://ko-fi.com/kassabakekii"
       },
       "desc": "unfinished/scraped"
     },
@@ -246,6 +246,14 @@
       "artist": {
         "name": "vermitian",
         "url": ""
+      }
+    },
+    {
+      "src": "assets/marisa-2026-08-07.webp",
+      "date": "2026-08-07",
+      "artist": {
+        "name": "marisa",
+        "url": "https://ko-fi.com/kassabakekii"
       }
     }
   ]
