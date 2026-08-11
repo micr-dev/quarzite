@@ -263,6 +263,15 @@
         "name": "Taibe",
         "url": "https://vgen.co/Taibe"
       }
+    },
+    {
+      "src": "assets/cadrecha-2026-08-11.png",
+      "date": "2026-08-11",
+      "artist": {
+        "name": "cadrecha",
+        "url": ""
+      },
+      "desc": "terraria style"
     }
   ]
 }
